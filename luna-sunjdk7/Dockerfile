@@ -17,18 +17,19 @@ RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | te
      oracle-java7-installer \
      oracle-java7-set-default \
      libgtk2.0-0:amd64 \
-     libxtst6 \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+     libxtst6 
 
 #Installing eclipse
 ENV ECLIPSE_URL http://mirror.onet.pl/pub/mirrors/eclipse//technology/epp/downloads/release/luna/SR2/eclipse-jee-luna-SR2-linux-gtk-x86_64.tar.gz
 ENV ECLIPSE_SHA1 df680622332c69303d23b14afe33281aca774f8e
-ENV ECLIPSE_ROOT /
+ENV ECLIPSE_HOME /eclipse
 
-RUN mkdir -p ${ECLIPSE_ROOT} && \
-    curl -fsSL ${ECLIPSE_URL} -o ${ECLIPSE_ROOT}/eclipse.tar.gz && \
-    echo "${ECLIPSE_SHA1} ${ECLIPSE_ROOT}/eclipse.tar.gz" | sha1sum -c - && \
-    tar -zxf ${ECLIPSE_ROOT}/eclipse.tar.gz -C ${ECLIPSE_ROOT} && rm -rf ${ECLIPSE_ROOT}/eclipse.tar.gz
+RUN mkdir -p ${ECLIPSE_HOME} && \
+    curl -fsSL ${ECLIPSE_URL} -o /tmp/eclipse.tar.gz && \
+    echo "${ECLIPSE_SHA1} /tmp/eclipse.tar.gz" | sha1sum -c - && \
+    tar -zxf /tmp/eclipse.tar.gz -C /tmp/ && \
+    mv -f /tmp/eclipse/* ${ECLIPSE_HOME} && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/cache/*
 	
 ENTRYPOINT ["/bin/tini", "--"]
-CMD ${ECLIPSE_ROOT}/eclipse/eclipse
+CMD ${ECLIPSE_HOME}/eclipse
